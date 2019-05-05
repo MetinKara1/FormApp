@@ -1,0 +1,103 @@
+﻿@model EntityLayer.FormGetPost
+@{
+    ViewBag.Title = "Index";
+}
+<!DOCTYPE html>
+<html ng-app="formApp">
+<head>
+    <script src="~/Scripts/vendor/jquery/jquery.min.js"></script>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/Angular.js"></script>
+    <script type="text/javascript">
+        var formApp = angular.module('formApp', []);
+        formApp.controller('formCtrl', function ($scope, $http) {
+            $http({
+                method: "GET",
+                url: "http://localhost:30364/Home/GetData"
+            }).then(function (res) {
+                $scope.data = res.data;
+            });
+        });
+    </script>
+</head>
+<body ng-controller="formCtrl">
+    <div class="container">
+        <div class="row">
+            <br />
+            <div class="col-md-12">
+                
+                <section class="content">
+                    <input type="text" ng-model="query.Name" placeholder="Form ara" />
+                    <div class="box-body">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <tr>
+                                <th align="left">  <a href="" ng-click="sortField='name'; reverse=!reverse">Form Name</a></th>
+                                <th align="left">Description</th>
+                                <th align="left">Name Surname</th>
+                                <th align="left">Age</th>
+                            </tr>
+                            <tr />
+                            <tr />
+                            <tr ng-repeat="item in data | filter:query">
+                                @* | orderBy:sortField:reverse *@
+                                <td>{{item.Name }}</td>
+                                <td>{{item.Description}}</td>
+                                <td>{{item.Field.Name}} {{item.Field.Surname}}</td>
+                                <td>{{item.Field.Age}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <!-- /.row -->
+                </section>
+
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    New Form
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    @using (Html.BeginForm("Save", "Home", FormMethod.Get))
+        {
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger validation-summary" })
+                        <div class="input-group">
+                            Form Name:   @Html.TextBoxFor(x => x.Form.Name)
+                            @Html.ValidationMessageFor(x => x.Form.Name, "", new { @class = "text text-danger" })
+                        </div>
+                        <div class="input-group">
+                            Description: @Html.TextBoxFor(x => x.Form.Description)
+                            @Html.ValidationMessageFor(x => x.Form.Description, "", new { @class = "text text-danger" })
+                        </div>
+                        <div class="input-group">
+                            Name:        @Html.TextBoxFor(x => x.Form.Field.Name)
+                            @Html.ValidationMessageFor(x => x.Form.Field.Name, "", new { @class = "text text-danger" })
+                        </div>
+                        <div class="input-group">
+                            Surname:     @Html.TextBoxFor(x => x.Form.Field.Surname)
+                            @Html.ValidationMessageFor(x => x.Form.Field.Surname, "", new { @class = "text text-danger" })
+                        </div>
+                        <div class="input-group">
+                            Age:         @Html.TextBoxFor(x => x.Form.Field.Age)
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        @*@Html.ActionLink("Save","Save", "Home", null, new { @class= "btn btn-primary", @type="button" })*@
+                    </div>
+                </div>
+            </div>
+}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
